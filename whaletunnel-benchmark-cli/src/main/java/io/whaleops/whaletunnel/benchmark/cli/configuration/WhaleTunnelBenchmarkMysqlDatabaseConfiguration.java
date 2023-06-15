@@ -11,7 +11,7 @@ public class WhaleTunnelBenchmarkMysqlDatabaseConfiguration {
     private WhaleTunnelBenchmarkMysqlDatabaseConfiguration() {
         WhaleTunnelBenchmarkConfiguration whaleTunnelBenchmarkConfiguration = new WhaleTunnelBenchmarkConfiguration(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
         this.jdbcUrl = whaleTunnelBenchmarkConfiguration.getProperty("jdbcUrl");
-        this.userName = whaleTunnelBenchmarkConfiguration.getProperty("userName");
+        this.userName = whaleTunnelBenchmarkConfiguration.getProperty("username");
         this.password = whaleTunnelBenchmarkConfiguration.getProperty("password");
     }
 

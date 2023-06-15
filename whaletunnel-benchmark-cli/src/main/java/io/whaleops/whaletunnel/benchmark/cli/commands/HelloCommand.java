@@ -8,7 +8,7 @@ import org.springframework.shell.standard.ShellOption;
 public class HelloCommand {
 
     @ShellMethod(key = "hello")
-    public String sayHello(@ShellOption(defaultValue = "whaletunnel-benchmark-cli") String name) {
+    public String sayHello(@ShellOption(defaultValue = "whaletunnel-benchmark-cli", value = "-name") String name) {
         return "Hello world " + name + "!";
     }
 }

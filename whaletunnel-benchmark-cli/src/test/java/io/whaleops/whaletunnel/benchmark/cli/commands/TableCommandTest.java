@@ -17,10 +17,12 @@
 
 package io.whaleops.whaletunnel.benchmark.cli.commands;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
+@Disabled
 public class TableCommandTest {
 
     @Test

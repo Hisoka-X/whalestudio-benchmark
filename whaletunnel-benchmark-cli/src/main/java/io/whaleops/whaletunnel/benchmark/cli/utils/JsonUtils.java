@@ -8,6 +8,7 @@ import static com.fasterxml.jackson.databind.MapperFeature.REQUIRE_SETTERS_FOR_G
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -40,7 +41,7 @@ public class JsonUtils {
             ObjectWriter writer = OBJECT_MAPPER.writer(feature);
             return writer.writeValueAsString(object);
         } catch (Exception e) {
-            throw new IllegalArgumentException("object to json string error", e);
+            throw new IllegalArgumentException("Object to json string error", e);
         }
     }
 
@@ -52,8 +53,15 @@ public class JsonUtils {
         try {
             return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (Exception e) {
-            throw new RuntimeException("Object json deserialization exception.", e);
+            throw new IllegalArgumentException("Object to pretty json exception.", e);
         }
     }
 
+    public static <T> T toObject(String response, TypeReference<T> typeReference) {
+        try {
+            return OBJECT_MAPPER.readValue(response, typeReference);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Json to object exception.", e);
+        }
+    }
 }

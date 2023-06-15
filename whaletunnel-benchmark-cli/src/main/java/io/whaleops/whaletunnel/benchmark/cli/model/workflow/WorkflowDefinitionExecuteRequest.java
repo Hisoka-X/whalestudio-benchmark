@@ -1,4 +1,4 @@
-package io.whaleops.whaletunnel.benchmark.cli.model;
+package io.whaleops.whaletunnel.benchmark.cli.model.workflow;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
