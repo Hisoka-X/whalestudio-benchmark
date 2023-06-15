@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkConfiguration;
+import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkEnvConfiguration;
 import io.whaleops.whaletunnel.benchmark.cli.model.WorkflowDefinitionExecuteRequest;
 import io.whaleops.whaletunnel.benchmark.cli.utils.OkHttpUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WhaleSchedulerSdk {
 
-    private static final String WHALESCHEDULER_HOST = WhaleTunnelBenchmarkConfiguration.getProperty("WHALESCHEDULER_HOST", "http://localhost:12345");
-    private static final String WHALESCHEDULER_TOKEN = WhaleTunnelBenchmarkConfiguration.getProperty("WHALESCHEDULER_TOKEN");
+    private static final String WHALESCHEDULER_HOST = WhaleTunnelBenchmarkEnvConfiguration.getInstance().getWhaleSchedulerHost();
+    private static final String WHALESCHEDULER_TOKEN = WhaleTunnelBenchmarkEnvConfiguration.getInstance().getWhaleSchedulerToken();
 
     private static final String EXECUTE_WORKFLOW_DEFINITION_URL = WHALESCHEDULER_HOST + "/dolphinscheduler/projects/executors/start-process-instance";
 

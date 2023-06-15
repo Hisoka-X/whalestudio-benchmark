@@ -1,14 +1,13 @@
 package io.whaleops.whaletunnel.benchmark.cli.exception;
 
-public enum InitializeEnvCommandExceptionStatus implements ExceptionStatus {
-    INITIALIZE_ENV_FILE_EXCEPTION_STATUS("InitializeEnvCommandExceptionStatus-001", "Initialize env file error"),
-
+public enum DataAssertExceptionStatus implements ExceptionStatus {
+    ROW_COUNT_DOES_NOT_MATCH("DataAssertException-001", "row count does not match"),
     ;
 
     private final String code;
     private final String message;
 
-    InitializeEnvCommandExceptionStatus(String code, String message) {
+    DataAssertExceptionStatus(String code, String message) {
         this.code = code;
         this.message = message;
     }
