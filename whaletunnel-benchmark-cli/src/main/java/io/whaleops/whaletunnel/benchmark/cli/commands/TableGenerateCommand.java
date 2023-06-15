@@ -1,14 +1,15 @@
 package io.whaleops.whaletunnel.benchmark.cli.commands;
 
-import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkConfiguration;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
+
+import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkMysqlDatabaseConfiguration;
 
 /**
  * Use to generate table for benchmark.
@@ -28,11 +29,11 @@ public class TableGenerateCommand {
     @ShellMethod(key = "table")
     public String tableGenerate(String database, @ShellOption(defaultValue = "all_types_table_") String prefix, int number) throws SQLException {
 
-        WhaleTunnelBenchmarkConfiguration configuration = new WhaleTunnelBenchmarkConfiguration(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
+        WhaleTunnelBenchmarkMysqlDatabaseConfiguration instance = WhaleTunnelBenchmarkMysqlDatabaseConfiguration.getInstance();
 
-        String url = configuration.getProperty("jdbc.url");
-        String password = configuration.getProperty("jdbc.password");
-        String user = configuration.getProperty("jdbc.user");
+        String url = instance.getJdbcUrl();
+        String user = instance.getUserName();
+        String password = instance.getPassword();
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             Statement statement = connection.createStatement();

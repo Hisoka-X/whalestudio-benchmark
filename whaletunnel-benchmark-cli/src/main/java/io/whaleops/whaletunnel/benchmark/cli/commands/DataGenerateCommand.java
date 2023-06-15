@@ -1,10 +1,5 @@
 package io.whaleops.whaletunnel.benchmark.cli.commands;
 
-import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkConfiguration;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,6 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
+
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+
+import io.whaleops.whaletunnel.benchmark.cli.configuration.WhaleTunnelBenchmarkMysqlDatabaseConfiguration;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Use to generate data for benchmark.
@@ -31,18 +32,18 @@ public class DataGenerateCommand {
     @ShellMethod(key = "data")
     public String dataGenerate(String database, String tablePattern, int number) throws SQLException {
 
-        WhaleTunnelBenchmarkConfiguration configuration = new WhaleTunnelBenchmarkConfiguration(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
+        WhaleTunnelBenchmarkMysqlDatabaseConfiguration instance = WhaleTunnelBenchmarkMysqlDatabaseConfiguration.getInstance();
 
-        String url = configuration.getProperty("jdbc.url");
-        String password = configuration.getProperty("jdbc.password");
-        String user = configuration.getProperty("jdbc.user");
+        String url = instance.getJdbcUrl();
+        String user = instance.getUserName();
+        String password = instance.getPassword();
         Random random = new Random();
         List<String> tableNames = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password);
              ResultSet resultSet =
                  connection
                      .getMetaData()
-                     .getTables(database, database, null, new String[]{"TABLE"})) {
+                     .getTables(database, database, null, new String[] {"TABLE"})) {
             Pattern pattern = Pattern.compile(tablePattern);
             while (resultSet.next()) {
                 String tableName = resultSet.getString("TABLE_NAME");
