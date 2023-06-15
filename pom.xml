@@ -21,7 +21,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <guava.version>24.1-jre</guava.version>
     </properties>
 

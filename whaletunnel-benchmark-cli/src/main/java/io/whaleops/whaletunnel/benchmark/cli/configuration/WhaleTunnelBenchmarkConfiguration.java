@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WhaleTunnelBenchmarkConfiguration {
 
-    private static final String ENV_FILE_PATH = Paths.get(System.getProperty("user.home"), ".whalescheduler-benchmark", "whalescheduler-benchmark.env").toString();
+    public static final String ENV_FILE_PATH = Paths.get(System.getProperty("user.home"), ".whalescheduler-benchmark", "whalescheduler-benchmark.env").toString();
 
     public static final Properties properties = new Properties();
 
