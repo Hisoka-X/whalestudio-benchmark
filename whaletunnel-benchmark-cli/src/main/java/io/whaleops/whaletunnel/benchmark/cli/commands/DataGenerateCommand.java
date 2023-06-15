@@ -31,9 +31,11 @@ public class DataGenerateCommand {
     @ShellMethod(key = "data")
     public String dataGenerate(String database, String tablePattern, int number) throws SQLException {
 
-        String url = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.url");
-        String password = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.password");
-        String user = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.user");
+        WhaleTunnelBenchmarkConfiguration configuration = new WhaleTunnelBenchmarkConfiguration(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
+
+        String url = configuration.getProperty("jdbc.url");
+        String password = configuration.getProperty("jdbc.password");
+        String user = configuration.getProperty("jdbc.user");
         Random random = new Random();
         List<String> tableNames = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password);

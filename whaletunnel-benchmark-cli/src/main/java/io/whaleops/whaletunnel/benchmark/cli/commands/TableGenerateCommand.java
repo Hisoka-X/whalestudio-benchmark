@@ -28,9 +28,11 @@ public class TableGenerateCommand {
     @ShellMethod(key = "table")
     public String tableGenerate(String database, @ShellOption(defaultValue = "all_types_table_") String prefix, int number) throws SQLException {
 
-        String url = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.url");
-        String password = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.password");
-        String user = WhaleTunnelBenchmarkConfiguration.getProperty("jdbc.user");
+        WhaleTunnelBenchmarkConfiguration configuration = new WhaleTunnelBenchmarkConfiguration(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
+
+        String url = configuration.getProperty("jdbc.url");
+        String password = configuration.getProperty("jdbc.password");
+        String user = configuration.getProperty("jdbc.user");
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             Statement statement = connection.createStatement();
