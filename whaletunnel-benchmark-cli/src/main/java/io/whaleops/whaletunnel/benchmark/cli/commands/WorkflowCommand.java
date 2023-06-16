@@ -21,17 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @ShellComponent
 public class WorkflowCommand {
 
-    @ShellMethod(value = "Execute a exist workflow", key = "launch-wf")
-    public void launchWorkflow(@ShellOption(value = "-p", help = "Project Code") Long projectCode,
-                               @ShellOption(value = "-wf", help = "WorkflowDefinition Code") Long processDefinitionCode) {
+    @ShellMethod(value = "Execute a exist workflow, e.g. launch-wf --p 123 --wf 1234", key = "launch-wf")
+    public void launchWorkflow(@ShellOption(value = "p", help = "Project Code") Long projectCode,
+                               @ShellOption(value = "wf", help = "WorkflowDefinition Code") Long processDefinitionCode) {
         WorkflowDefinitionExecuteRequest workflowDefinitionExecuteRequest = new WorkflowDefinitionExecuteRequest();
         workflowDefinitionExecuteRequest.setProjectCode(projectCode);
         workflowDefinitionExecuteRequest.setProcessDefinitionCode(processDefinitionCode);
         WhaleSchedulerSdk.executeWorkflowDefinition(workflowDefinitionExecuteRequest);
     }
 
-    @ShellMethod(value = "Execute all workflow under exist project", key = "launch-all-wf")
-    public void launchAllWorkflowUnderProjects(@ShellOption(value = "-p", defaultValue = NULL, help = "Project Codes, if empty will launch all workflows") List<Long> projectCodes) {
+    @ShellMethod(value = "Execute all workflow under exist project, e.g. launch-all-wf --p 123,124", key = "launch-all-wf")
+    public void launchAllWorkflowUnderProjects(@ShellOption(value = "p", defaultValue = NULL, help = "Project Codes, if empty will launch all workflows") List<Long> projectCodes) {
         if (CollectionUtils.isEmpty(projectCodes)) {
             projectCodes = WhaleSchedulerSdk.listProjects()
                 .stream()

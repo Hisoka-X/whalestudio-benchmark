@@ -10,10 +10,18 @@ whaletunnel-benchmark-cli is powered by spring-shell, more detail about how to b
 
 ## How to use
 
-### build
+### Build Project
+
+You need to install jdk 17+ and maven 3.6+.
 
 ```shell
 mvn clean package.
+```
+
+After build success, you can find the jar file in target directory.
+
+```shell
+whaletunnel-benchmark-cli/target/whaletunnel-benchmark-cli-1.0-SNAPSHOT.jar
 ```
 
 ### run
@@ -25,7 +33,16 @@ java -jar whaletunnel-benchmark-cli-1.0.0-SNAPSHOT.jar
 ### hello
 
 ```shell
-hello --name whaletunnel
+hello --n whaletunnel
+```
+
+### Initialize env
+
+whaletunnel-benchmark-cli dependent on some env files, so you need to initialize whaletunnel-benchmark first.
+You can use below command to initialize whaletunnel-benchmark-cli.
+
+```shell
+initialize-env 
 ```
 
 ### exit

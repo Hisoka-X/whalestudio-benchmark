@@ -9,18 +9,17 @@ import org.springframework.shell.standard.ShellMethod;
 
 import io.whaleops.whaletunnel.benchmark.cli.model.project.Project;
 import io.whaleops.whaletunnel.benchmark.cli.sdk.WhaleSchedulerSdk;
-import io.whaleops.whaletunnel.benchmark.cli.utils.ConsoleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ShellComponent
 public class ProjectCommand {
 
-    @ShellMethod(value = "List all projects", key = "lp")
-    public List<Project> listProjects() {
+    @ShellMethod(value = "List all projects, e.g. lp", key = "lp")
+    public String listProjects() {
         List<Project> projects = WhaleSchedulerSdk.listProjects();
         if (CollectionUtils.isEmpty(projects)) {
-            return projects;
+            return "";
         }
         StringBuilder stringBuilder = new StringBuilder();
         // todo: use table format
@@ -28,8 +27,7 @@ public class ProjectCommand {
         for (Project project : projects) {
             stringBuilder.append(project.getName()).append("\t").append(project.getCode()).append("\n");
         }
-        ConsoleUtils.console(stringBuilder.toString());
-        return projects;
+        return stringBuilder.toString();
     }
 
 }

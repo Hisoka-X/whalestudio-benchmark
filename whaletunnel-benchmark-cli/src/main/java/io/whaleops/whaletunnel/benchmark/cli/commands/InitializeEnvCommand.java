@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @ShellComponent
 public class InitializeEnvCommand {
 
-    @ShellMethod("Initialize Env e.g. Create whaletunnel-benchmark.env file")
+    @ShellMethod("Initialize benchmark env, e.g. init-env")
     public void initializeEnv() throws IOException {
         initializeEnvFile();
     }

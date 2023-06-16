@@ -43,8 +43,11 @@ public class OkHttpUtils {
                               Object requestBody) throws IOException {
         String finalUrl = addUrlParams(requestParamsMap, url);
         Request.Builder requestBuilder = new Request.Builder().url(finalUrl);
+        addHeader(httpHeaders, requestBuilder);
         if (requestBody != null) {
             requestBuilder = requestBuilder.post(RequestBody.create(MediaType.parse("application/json"), JsonUtils.toJsonString(requestBody)));
+        } else {
+            requestBuilder = requestBuilder.post(RequestBody.create(null, new byte[0]));
         }
         try (Response response = CLIENT.newCall(requestBuilder.build()).execute()) {
             return getResponseBody(response);
@@ -62,7 +65,9 @@ public class OkHttpUtils {
         }
         HttpUrl.Builder urlBuilder = httpUrl.newBuilder();
         for (Map.Entry<String, Object> entry : requestParams.entrySet()) {
-            urlBuilder.addQueryParameter(entry.getKey(), entry.getValue().toString());
+            if (entry.getValue() != null) {
+                urlBuilder.addQueryParameter(entry.getKey(), entry.getValue().toString());
+            }
         }
         return urlBuilder.toString();
     }
