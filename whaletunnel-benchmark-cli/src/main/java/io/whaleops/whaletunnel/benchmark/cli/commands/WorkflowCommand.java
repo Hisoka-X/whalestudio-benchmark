@@ -31,7 +31,10 @@ public class WorkflowCommand {
     }
 
     @ShellMethod(value = "Execute all workflow under exist project, e.g. launch-all-wf --p 123,124", key = "launch-all-wf")
-    public void launchAllWorkflowUnderProjects(@ShellOption(value = "p", defaultValue = NULL, help = "Project Codes, if empty will launch all workflows") List<Long> projectCodes) {
+    public void launchAllWorkflowUnderProjects(
+        @ShellOption(value = "p", defaultValue = NULL, help = "Project Codes, if empty will launch all workflows") List<Long> projectCodes,
+        @ShellOption(value = "b", defaultValue = NULL, help = "Workflow batch size, if set will sleep interval/s after a batch") Integer batchSize,
+        @ShellOption(value = "i", defaultValue = NULL, help = "Interval/s") Long interval) {
         if (CollectionUtils.isEmpty(projectCodes)) {
             projectCodes = WhaleSchedulerSdk.listProjects()
                 .stream()
@@ -48,12 +51,21 @@ public class WorkflowCommand {
                 log.info("There is no workflow under project: {}, please create workflow first", projectCode);
                 continue;
             }
+            int i = 0;
             for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
-                WorkflowDefinitionExecuteRequest workflowDefinitionExecuteRequest = new WorkflowDefinitionExecuteRequest();
-                workflowDefinitionExecuteRequest.setProjectCode(projectCode);
-                workflowDefinitionExecuteRequest.setProcessDefinitionCode(workflowDefinition.getCode());
-                WhaleSchedulerSdk.executeWorkflowDefinition(workflowDefinitionExecuteRequest);
+                launchWorkflow(projectCode, workflowDefinition.getCode());
                 log.info("Launch workflow: {} success", workflowDefinition.getName());
+                i++;
+                if (batchSize == null) {
+                    continue;
+                }
+                if (i % batchSize == 0) {
+                    try {
+                        Thread.sleep(interval);
+                    } catch (InterruptedException e) {
+                        log.error("Sleep error", e);
+                    }
+                }
             }
         }
     }
