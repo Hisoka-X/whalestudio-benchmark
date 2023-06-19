@@ -5,6 +5,7 @@ import static org.springframework.shell.standard.ShellOption.NULL;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.shell.standard.ShellComponent;
@@ -61,7 +62,7 @@ public class WorkflowCommand {
                 }
                 if (i % batchSize == 0) {
                     try {
-                        Thread.sleep(interval);
+                        Thread.sleep(TimeUnit.SECONDS.toMillis(interval));
                     } catch (InterruptedException e) {
                         log.error("Sleep error", e);
                     }
