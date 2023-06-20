@@ -36,7 +36,7 @@ public class InitializeEnvCommand {
                 Files.copy(resourceAsStream, Paths.get(WhaleTunnelBenchmarkConfiguration.ENV_FILE_PATH));
                 log.info("Success create env file: {}", WhaleTunnelBenchmarkConfiguration.ENV_FILE_PATH);
             }
-            try (InputStream resourceAsStream = InitializeEnvCommand.class.getClassLoader().getResourceAsStream(".whaletunnel-benchmark/whaletunnel-benchmark-mysql.env");) {
+            try (InputStream resourceAsStream = InitializeEnvCommand.class.getClassLoader().getResourceAsStream(".whaletunnel-benchmark/whaletunnel-benchmark-database.env");) {
                 Files.copy(resourceAsStream, Paths.get(WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH));
                 log.info("Success create env file: {}", WhaleTunnelBenchmarkConfiguration.MYSQL_ENV_FILE_PATH);
             }

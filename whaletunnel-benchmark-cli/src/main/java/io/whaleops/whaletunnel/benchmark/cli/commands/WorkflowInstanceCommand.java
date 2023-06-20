@@ -11,6 +11,8 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+import com.google.common.collect.Lists;
+
 import io.whaleops.whaletunnel.benchmark.cli.model.workflowinstance.WorkflowInstance;
 import io.whaleops.whaletunnel.benchmark.cli.sdk.WhaleSchedulerSdk;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +28,15 @@ public class WorkflowInstanceCommand {
             log.warn("There is no workflow instance under given projects: {}", projectCodes);
             return;
         }
-        String workflowInstanceIds = workflowInstances.stream()
-            .map(WorkflowInstance::getId)
-            .map(String::valueOf)
-            .collect(Collectors.joining(","));
-        WhaleSchedulerSdk.deleteWorkflowInstance(workflowInstanceIds);
-        log.info("Success delete workflow instances: {} under given project", workflowInstances.size());
+        Lists.partition(workflowInstances, 10)
+            .forEach(subWorkflowInstances -> {
+                String workflowInstanceIds = subWorkflowInstances.stream()
+                    .map(WorkflowInstance::getId)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+                WhaleSchedulerSdk.deleteWorkflowInstance(workflowInstanceIds);
+                log.info("Success delete workflow instances: {} under given project", subWorkflowInstances.size());
+            });
     }
 
     @ShellMethod(key = "analysis-wfi", value = "Query workflow instance status under given projects, e.g. analysis-wfi -p 1,2,3")
