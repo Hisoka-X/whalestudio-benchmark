@@ -94,11 +94,15 @@ public class WhaleSchedulerSdk {
     }
 
     public static List<WorkflowInstance> listWorkflowInstances(List<Long> projectCodes) {
+        return listWorkflowInstances(projectCodes, 1, 1000);
+    }
+
+    public static List<WorkflowInstance> listWorkflowInstances(List<Long> projectCodes, int pageNo, int pageSize) {
         try {
             ImmutableMap<String, Object> requestParams = new ImmutableMap.Builder<String, Object>()
                 .put("projectCodes", projectCodes.stream().map(String::valueOf).collect(Collectors.joining(",")))
-                .put("pageNo", 1)
-                .put("pageSize", 1000)
+                .put("pageNo", pageNo)
+                .put("pageSize", pageSize)
                 .build();
             String response = OkHttpUtils.get(LIST_WORKFLOW_INSTANCES_URL,
                 generateHeaders(),

@@ -41,11 +41,21 @@ public class WorkflowInstanceCommand {
 
     @ShellMethod(key = "analysis-wfi", value = "Query workflow instance status under given projects, e.g. analysis-wfi -p 1,2,3")
     public String analysisWorkflowInstance(@ShellOption(value = "p", help = "projectCodes") List<Long> projectCodes) {
-        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes);
+        int pageNo = 1;
+        int pageSize = 1000;
+        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
         if (CollectionUtils.isEmpty(workflowInstances)) {
             log.warn("There is no workflow instance under given projects: {}", projectCodes);
             return "";
         }
+        int currentCount = workflowInstances.size();
+        while (currentCount > 0) {
+            pageNo++;
+            List<WorkflowInstance> currentWorkflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
+            currentCount = currentWorkflowInstances.size();
+            workflowInstances.addAll(currentWorkflowInstances);
+        }
+
         Map<String, Long> workflowInstanceMap = new HashMap<>();
         for (WorkflowInstance workflowInstance : workflowInstances) {
             workflowInstanceMap.put(workflowInstance.getState(), workflowInstanceMap.getOrDefault(workflowInstance.getState(), 0L) + 1);
