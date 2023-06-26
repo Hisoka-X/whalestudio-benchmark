@@ -21,14 +21,41 @@ import lombok.extern.slf4j.Slf4j;
 @ShellComponent
 public class WorkflowInstanceCommand {
 
-    @ShellMethod(key = "delete-wfi", value = "Clear workflow instance under given projects, e.g. delete-wfi -p 1,2,3")
-    public void clearWorkflowInstance(@ShellOption(value = "p", help = "projectCodes") List<Long> projectCodes) {
+    @ShellMethod(key = "kill-wfi", value = "Kill workflow instance under given projects, e.g. kill-wfi -wfi 1,2,3")
+    public void killWorkflowInstance(@ShellOption(value = "p", help = "Project codes") List<Long> projectCodes) {
         List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes);
         if (CollectionUtils.isEmpty(workflowInstances)) {
             log.warn("There is no workflow instance under given projects: {}", projectCodes);
             return;
         }
-        Lists.partition(workflowInstances, 10)
+        for (WorkflowInstance workflowInstance : workflowInstances) {
+            WhaleSchedulerSdk.killWorkflowInstance(workflowInstance.getId());
+            log.info("Success kill workflow instance: {} under given project", workflowInstance.getName());
+        }
+    }
+
+    @ShellMethod(key = "restart-wfi", value = "Restart workflow instance under given projects, e.g. restart-wfi -p 1,2,3")
+    public void restartWorkflowInstance(@ShellOption(value = "p", help = "Project codes") List<Long> projectCodes) {
+        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes);
+        if (CollectionUtils.isEmpty(workflowInstances)) {
+            log.warn("There is no workflow instance under given projects: {}", projectCodes);
+            return;
+        }
+        for (WorkflowInstance workflowInstance : workflowInstances) {
+            // todo: check the workflow instance is finished
+            WhaleSchedulerSdk.restartWorkflowInstance(workflowInstance.getId());
+            log.info("Success kill workflow instance: {} under given project", workflowInstance.getName());
+        }
+    }
+
+    @ShellMethod(key = "delete-wfi", value = "Clear workflow instance under given projects, e.g. delete-wfi -p 1,2,3")
+    public void clearWorkflowInstance(@ShellOption(value = "p", help = "Project codes") List<Long> projectCodes) {
+        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes);
+        if (CollectionUtils.isEmpty(workflowInstances)) {
+            log.warn("There is no workflow instance under given projects: {}", projectCodes);
+            return;
+        }
+        Lists.partition(workflowInstances, 20)
             .forEach(subWorkflowInstances -> {
                 String workflowInstanceIds = subWorkflowInstances.stream()
                     .map(WorkflowInstance::getId)
@@ -41,19 +68,10 @@ public class WorkflowInstanceCommand {
 
     @ShellMethod(key = "analysis-wfi", value = "Query workflow instance status under given projects, e.g. analysis-wfi -p 1,2,3")
     public String analysisWorkflowInstance(@ShellOption(value = "p", help = "projectCodes") List<Long> projectCodes) {
-        int pageNo = 1;
-        int pageSize = 1000;
-        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
+        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes);
         if (CollectionUtils.isEmpty(workflowInstances)) {
             log.warn("There is no workflow instance under given projects: {}", projectCodes);
             return "";
-        }
-        int currentCount = workflowInstances.size();
-        while (currentCount > 0) {
-            pageNo++;
-            List<WorkflowInstance> currentWorkflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
-            currentCount = currentWorkflowInstances.size();
-            workflowInstances.addAll(currentWorkflowInstances);
         }
 
         Map<String, Long> workflowInstanceMap = new HashMap<>();

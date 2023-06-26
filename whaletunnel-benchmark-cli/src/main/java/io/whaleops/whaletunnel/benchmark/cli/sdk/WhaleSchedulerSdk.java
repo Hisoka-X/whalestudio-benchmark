@@ -1,5 +1,7 @@
 package io.whaleops.whaletunnel.benchmark.cli.sdk;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +34,8 @@ public class WhaleSchedulerSdk {
     private static final String LIST_WORKFLOW_DEFINITIONS_URL = WHALESCHEDULER_HOST + "/dolphinscheduler/projects/process-definition/query-process-definition-list";
     private static final String LIST_WORKFLOW_INSTANCES_URL = WHALESCHEDULER_HOST + "/dolphinscheduler/projects/process-instances";
     private static final String DELETE_WORKFLOW_INSTANCES_URL = WHALESCHEDULER_HOST + "/dolphinscheduler/projects/process-instances/batch-delete";
+
+    private static final String CONTROL_WORKFLOW_INSTANCE_URL = WHALESCHEDULER_HOST + "/dolphinscheduler/projects/executors/execute";
 
 
     public static void executeWorkflowDefinition(WorkflowDefinitionExecuteRequest workflowDefinitionExecuteRequest) {
@@ -94,7 +98,21 @@ public class WhaleSchedulerSdk {
     }
 
     public static List<WorkflowInstance> listWorkflowInstances(List<Long> projectCodes) {
-        return listWorkflowInstances(projectCodes, 1, 1000);
+        int pageNo = 1;
+        int pageSize = 1000;
+        List<WorkflowInstance> workflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
+        if (CollectionUtils.isEmpty(workflowInstances)) {
+            log.warn("There is no workflow instance under given projects: {}", projectCodes);
+            return Collections.emptyList();
+        }
+        int currentCount = workflowInstances.size();
+        while (currentCount > 0) {
+            pageNo++;
+            List<WorkflowInstance> currentWorkflowInstances = WhaleSchedulerSdk.listWorkflowInstances(projectCodes, pageNo, pageSize);
+            currentCount = currentWorkflowInstances.size();
+            workflowInstances.addAll(currentWorkflowInstances);
+        }
+        return workflowInstances;
     }
 
     public static List<WorkflowInstance> listWorkflowInstances(List<Long> projectCodes, int pageNo, int pageSize) {
@@ -130,6 +148,48 @@ public class WhaleSchedulerSdk {
             });
             if (voidWhaleSchedulerResult.getCode() != 0) {
                 throw new RuntimeException("Delete workflow instance error: " + voidWhaleSchedulerResult.getMessage());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("List workflows error", e);
+        }
+    }
+
+    public static void killWorkflowInstance(Long workflowInstanceId) {
+        try {
+            ImmutableMap<String, Object> requestParams = new ImmutableMap.Builder<String, Object>()
+                .put("processInstanceId", workflowInstanceId)
+                .put("executeType", "STOP")
+                .build();
+            String response = OkHttpUtils.post(CONTROL_WORKFLOW_INSTANCE_URL,
+                generateHeaders(),
+                requestParams,
+                null
+            );
+            WhaleSchedulerResult<Void> voidWhaleSchedulerResult = JsonUtils.toObject(response, new TypeReference<WhaleSchedulerResult<Void>>() {
+            });
+            if (voidWhaleSchedulerResult.getCode() != 0) {
+                throw new RuntimeException("Stop workflow instance error: " + voidWhaleSchedulerResult.getMessage());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("List workflows error", e);
+        }
+    }
+
+    public static void restartWorkflowInstance(Long workflowInstanceId) {
+        try {
+            ImmutableMap<String, Object> requestParams = new ImmutableMap.Builder<String, Object>()
+                .put("processInstanceId", workflowInstanceId)
+                .put("executeType", "REPEAT_RUNNING")
+                .build();
+            String response = OkHttpUtils.post(CONTROL_WORKFLOW_INSTANCE_URL,
+                generateHeaders(),
+                requestParams,
+                null
+            );
+            WhaleSchedulerResult<Void> voidWhaleSchedulerResult = JsonUtils.toObject(response, new TypeReference<WhaleSchedulerResult<Void>>() {
+            });
+            if (voidWhaleSchedulerResult.getCode() != 0) {
+                throw new RuntimeException("Restart workflow instance error: " + voidWhaleSchedulerResult.getMessage());
             }
         } catch (IOException e) {
             throw new RuntimeException("List workflows error", e);
