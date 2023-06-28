@@ -2,13 +2,18 @@ package io.whaleops.whaletunnel.benchmark.cli.commands;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import com.google.common.collect.Lists;
+
+import io.whaleops.whaletunnel.benchmark.cli.model.RowTable;
 import io.whaleops.whaletunnel.benchmark.cli.model.project.Project;
 import io.whaleops.whaletunnel.benchmark.cli.sdk.WhaleSchedulerSdk;
+import io.whaleops.whaletunnel.benchmark.cli.utils.TableFormatUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,13 +26,13 @@ public class ProjectCommand {
         if (CollectionUtils.isEmpty(projects)) {
             return "";
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        // todo: use table format
-        stringBuilder.append("ProjectName").append("\t").append("ProjectCode").append("\n");
+        List<String> tableHeaders = Lists.newArrayList("ProjectName", "ProjectCode");
+        List<List<String>> tableBody = new ArrayList<>();
         for (Project project : projects) {
-            stringBuilder.append(project.getName()).append("\t").append(project.getCode()).append("\n");
+            tableBody.add(Lists.newArrayList(project.getName(), String.valueOf(project.getCode())));
         }
-        return stringBuilder.toString();
+        RowTable rowTable = new RowTable(tableHeaders, tableBody);
+        return TableFormatUtils.formatTable(rowTable);
     }
 
 }

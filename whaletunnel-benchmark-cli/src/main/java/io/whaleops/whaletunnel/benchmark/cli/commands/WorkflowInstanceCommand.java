@@ -13,8 +13,10 @@ import org.springframework.shell.standard.ShellOption;
 
 import com.google.common.collect.Lists;
 
+import io.whaleops.whaletunnel.benchmark.cli.model.RowTable;
 import io.whaleops.whaletunnel.benchmark.cli.model.workflowinstance.WorkflowInstance;
 import io.whaleops.whaletunnel.benchmark.cli.sdk.WhaleSchedulerSdk;
+import io.whaleops.whaletunnel.benchmark.cli.utils.TableFormatUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -78,11 +80,12 @@ public class WorkflowInstanceCommand {
         for (WorkflowInstance workflowInstance : workflowInstances) {
             workflowInstanceMap.put(workflowInstance.getState(), workflowInstanceMap.getOrDefault(workflowInstance.getState(), 0L) + 1);
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Workflow Instance Status:").append("\t").append("Count").append("\n");
+        List<String> tableHeaders = Lists.newArrayList("Workflow Instance Status", "Count");
+        List<List<String>> tableRows = Lists.newArrayList();
         for (Map.Entry<String, Long> entry : workflowInstanceMap.entrySet()) {
-            stringBuilder.append(entry.getKey()).append("\t").append(entry.getValue()).append("\n");
+            tableRows.add(Lists.newArrayList(entry.getKey(), String.valueOf(entry.getValue())));
         }
-        return stringBuilder.toString();
+        RowTable rowTable = new RowTable(tableHeaders, tableRows);
+        return TableFormatUtils.formatTable(rowTable);
     }
 }
