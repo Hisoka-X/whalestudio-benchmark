@@ -28,13 +28,13 @@ public class TableCommandTest {
     @Test
     void tableCreate() throws SQLException {
         TableGenerateCommand tableGenerateCommand = new TableGenerateCommand();
-        tableGenerateCommand.tableGenerate("engine_test", "all_types_table_", 500);
+        tableGenerateCommand.tableGenerate("oracle", "engine_test", "all_types_table_", 10);
     }
 
     @Test
     void dataGenerate() throws SQLException {
         DataGenerateCommand tableGenerateCommand = new DataGenerateCommand();
-        tableGenerateCommand.dataGenerate("engine_test", "all_types_table_.*", 200000);
+        tableGenerateCommand.dataGenerate("oracle", "engine_test", "ALL_TYPES_TABLE_.*", 100);
     }
 
 }
